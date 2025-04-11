@@ -5,62 +5,65 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
+use function Laravel\Prompts\password;
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function register(Request $request){
+        $dataUser=new User();
+        $rules = [
+            'name'=>'required|unique:users.name|max:60|min:4',
+            'password'=>'required',
+        ];
+        $validator=Validator::make($request->all(),$rules);
+        if($validator->fails()){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Validasi Gagal',
+                'data'=>$validator->errors()
+            ]);
+        }
+
+        $dataUser->name=$request->name;
+        $dataUser->password=$request->password;
+        $dataUser->save();
+
+        return response()->json([
+            'status'=>true,
+            'message'=>'Berhasil Register'
+        ],201);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    public function login(Request $request){
+        $rules = [
+            'name'=>'required',
+            'password'=>'required',
+        ];
+        $validator = Validator::make($request->all(),$rules);
+        if($validator->fails()){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Validasi Gagal',
+                'data'=>$validator->errors()
+            ]);
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if(!Auth::attempt($request->only(['name','password']))){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Nama Pengguna atau Password salah.'
+            ]);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        $dataUser=User::where('name',$request->name)->first();
+        return response()->json([
+            'status'=>true,
+            'message'=>'Berhasil Login',
+            'token'=>$dataUser->createToken('login')->plainTextToken
+        ]);
     }
 }
