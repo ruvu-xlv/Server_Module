@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function register(Request $request){
         $dataUser=new User();
         $rules = [
-            'name'=>'required|unique:users.name|max:60|min:4',
+            'name'=>'required|max:60|min:4',
             'password'=>'required',
         ];
         $validator=Validator::make($request->all(),$rules);
@@ -41,7 +41,7 @@ class AuthController extends Controller
     public function login(Request $request){
         $rules = [
             'name'=>'required',
-            'password'=>'required',
+            'password'=>'required',            
         ];
         $validator = Validator::make($request->all(),$rules);
         if($validator->fails()){
@@ -64,6 +64,15 @@ class AuthController extends Controller
             'status'=>true,
             'message'=>'Berhasil Login',
             'token'=>$dataUser->createToken('login')->plainTextToken
+        ]);
+    }
+
+    public function logout(Request $request){
+        $dataUser=$request->user();
+        $dataUser->currentAccessToken()->delete();
+        return response()->json([
+            'status'=>true,
+            'message'=>'Berhasil Logout'
         ]);
     }
 }
