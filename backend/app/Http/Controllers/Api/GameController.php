@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
 use App\Models\Game;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -38,10 +40,8 @@ class GameController extends Controller
                 'title'=>['required'],
                 'description'=>['required'],
                 'image'=>['nullable','image','max:3000'],
+                'slug'=>['required'],
             ]);
-
-            $validator['slug'] = Str::slug($request->title. '-' . Str::random());
-
 
             $imagePath=null;
             if($request->hasFile('image')){
@@ -71,7 +71,18 @@ class GameController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try{
+
+            $games = Game::find($id);
+            if(!$games){
+                return new ApiResource(false,'Data Game Tidak Ditemukan!!!',$games);
+            }
+
+            return new ApiResource(true,'Data Game ditemukan',$games);
+
+        }catch(\Exception $e){
+            return new ApiResource(true,"Caught Exception: {$e->getmessage()}",[]);
+        }
     }
 
     /**
@@ -79,7 +90,48 @@ class GameController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'siput' => ['required', 'max:225'],
+                'title' => ['required'],
+                'description' => ['required'],
+                'slug'=>['required'],
+                'image' => ['nullable', 'image', 'max:3048']
+            ]);
+
+            if ($validator->fails()) {
+                return new ApiResource(false, $validator->errors()->toArray(), []);
+            }
+
+            $games = Game::find($id);
+            if (!$games) {
+                return new ApiResource(false, 'Data Game tidak ditemukan', []);
+            }
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $fotoPath = $file->store('games_img', 'public');
+
+                if ($games->image && Storage::disk('public')->exists($games->image)) {
+                    Storage::disk('public')->delete($games->image);
+                }
+
+                $games->image = $fotoPath;
+            }
+
+            $games->title = $request->title;
+            $games->siput=$request->siput;
+            $games->slug=$request->slug;
+            $games->slug=$request->slug;
+            $games->description = $request->description;
+            $games->slug=$request->slug;
+            $games->save();
+
+            return new ApiResource(true, 'Data Game berhasil diupdate', $games);
+
+        } catch (\Exception $e) {
+            return new ApiResource(false, "Caught Exception: {$e->getMessage()}", []);
+        }
     }
 
     /**
@@ -87,6 +139,22 @@ class GameController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $games = Game::find($id);
+            if (!$games) {
+                return new ApiResource(false, 'Data Game tidak ditemukan', []);
+            }
+    
+            // Hapus gambar jika ada
+            if ($games->image && Storage::disk('public')->exists($games->image)) {
+                Storage::disk('public')->delete($games->image);
+            }
+    
+            $games->delete();
+    
+            return new ApiResource(true, 'Data Game berhasil dihapus', []);
+        } catch (\Exception $e) {
+            return new ApiResource(false, "Caught Exception: {$e->getMessage()}", []);
+        }
     }
 }

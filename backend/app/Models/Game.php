@@ -15,5 +15,6 @@ class Game extends Model
         'description',
         'image',
         'slug',
+        
     ];
 }

@@ -22,3 +22,7 @@ Route::get('v1/admin',[AdminController::class,'index'])->middleware('auth:sanctu
 
 // games
 Route::get('v1/games',[GameController::class,'index'])->middleware('auth:sanctum');
+Route::post('v1/games',[GameController::class,'store'])->middleware('auth:sanctum');
+Route::post('v1/games/{id}',[GameController::class,'update'])->middleware('auth:sanctum');
+Route::get('v1/games/{id}',[GameController::class,'show'])->middleware('auth:sanctum');
+Route::delete('v1/games/{id}',[GameController::class,'destroy'])->middleware('auth:sanctum');
