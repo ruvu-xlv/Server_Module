@@ -1,5 +1,62 @@
-<script setup>
+<script>
+    import { reactive, ref } from 'vue'
+    import { useRouter } from 'vue-router'
+    import axios from 'axios'
 
+    export default {
+
+        setup() {
+
+            const router = useRouter()
+
+            const user = reactive({
+                name: '',
+                password: '',
+            })
+
+            const validation = ref([])
+
+            const loginFailed = ref(null)
+
+            function login() {
+
+                let name = user.name
+                let password = user.password
+
+                axios.post('http://localhost:8000/api/v1/login', {
+                        name,
+                        password,
+                })
+                .then(response => {
+
+                    if(response.data.success) {
+
+                        localStorage.setItem('token', response.data.token)
+
+                        return router.push({
+                            name: 'dashboard'
+                        })
+                    }
+
+                    loginFailed.value = true
+
+
+                }).catch(error => {
+                    validation.value = error.response.data
+                })
+
+            }
+
+            return {
+                user,           
+                validation,    
+                loginFailed,   
+                login        
+            }
+
+        }
+
+    }
 </script>
 
 <template>
@@ -12,29 +69,37 @@
                      <div class="card-body">
                         <h3 class="mb-3">Sign In</h3>
                         
-                        <form action="Administrator Portal/index.html"> 
-                           <!-- s: input -->
-                           <div class="form-group my-3">
-                              <label for="username" class="mb-1 text-muted">Username</label>
-                              <input type="text" id="username" name="username" value="" class="form-control" autofocus />
-                           </div> 
+                        <form @submit.prevent="login">
+                        <div class="form-group my-3">
+                            <label for="name" class="mb-1 text-muted">Username</label>
+                            <input type="text" id="name" name="name" v-model="user.name" class="form-control" autofocus />
+                        </div>
+                    
+                        <div class="form-group my-3">
+                            <label for="password" class="mb-1 text-muted">Password</label>
+                            <input type="password" id="password" name="password" v-model="user.password" class="form-control" />
+                        </div>
+                    
+                        <div v-if="loginFailed" class="alert alert-danger">
+                            Login gagal. Cek username dan password.
+                        </div>
+                    
+                        <div v-if="validation.length" class="alert alert-danger">
+                            <ul>
+                                <li v-for="(err, index) in validation" :key="index">{{ err }}</li>
+                            </ul>
+                        </div>
+                    
+                        <div class="mt-4 row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                            </div>
+                            <div class="col">
+                                <a href="logout" class="btn btn-danger w-100">Sign up</a>
+                            </div>
+                        </div>
+                    </form>
 
-                           <!-- s: input -->
-                           <div class="form-group my-3">
-                              <label for="password" class="mb-1 text-muted">Password</label>
-                              <input type="password" id="password" name="password" value="" class="form-control" />
-                           </div>
-                           
-                           <div class="mt-4 row">
-                              <div class="col">
-                                 <button type="submit" class="btn btn-primary w-100">Sign In</button>
-                              </div>
-                              <div class="col">
-                                 <a href="Gaming Portal/signup.html" class="btn btn-danger w-100">Sign up</a>
-                              </div>
-                              
-                           </div>
-                        </form>
 
                      </div>
                   </div> 

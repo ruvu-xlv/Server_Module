@@ -8,6 +8,11 @@ const routes = [
     name: 'login',
     component: () => import('../views/Login.vue'), // Lazy-loaded
   },
+  {
+    path:'/dashboard',
+    name:'/dashboard',
+    component:()=>import('../views/admin/Dashboard.vue'),
+  }
 ]
 
 // Create router instance
