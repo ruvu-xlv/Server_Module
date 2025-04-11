@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,7 @@ Route::middleware('auth:sanctum')->post('v1/auth/logout', [AuthController::class
 
 
 Route::get('v1/admin',[AdminController::class,'index'])->middleware('auth:sanctum');
+
+
+// games
+Route::get('v1/games',[GameController::class,'index'])->middleware('auth:sanctum');

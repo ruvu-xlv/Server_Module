@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('siput');
             $table->string('title');
             $table->string('description');
-            $table->string('thumbnail');
+            $table->string('image');
+            $table->string('slug');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 

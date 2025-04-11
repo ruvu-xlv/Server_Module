@@ -13,6 +13,7 @@ class Game extends Model
         'siput',
         'title',
         'description',
-        'thumbnail',
+        'image',
+        'slug',
     ];
 }
