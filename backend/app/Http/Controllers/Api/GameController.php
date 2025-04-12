@@ -36,7 +36,6 @@ class GameController extends Controller
         try{
 
             $validator=Validator::make($request->all(),[
-                'siput'=>['required'],
                 'title'=>['required'],
                 'description'=>['required'],
                 'image'=>['nullable','image','max:3000'],
@@ -50,7 +49,6 @@ class GameController extends Controller
             }
 
             if($games=Game::create([
-                'siput'=>$request->siput,
                 'title'=>$request->title,
                 'description'=>$request->description,
                 'image'=>$imagePath,
@@ -92,7 +90,6 @@ class GameController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'siput' => ['required', 'max:225'],
                 'title' => ['required'],
                 'description' => ['required'],
                 'slug'=>['required'],
@@ -120,11 +117,8 @@ class GameController extends Controller
             }
 
             $games->title = $request->title;
-            $games->siput=$request->siput;
-            $games->slug=$request->slug;
             $games->slug=$request->slug;
             $games->description = $request->description;
-            $games->slug=$request->slug;
             $games->save();
 
             return new ApiResource(true, 'Data Game berhasil diupdate', $games);

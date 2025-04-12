@@ -21,6 +21,12 @@
               >
             </li>
           </ul>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0" role="search">
+            <a
+              class="btn btn-success"
+              >Game Portal</a
+            >
+          </ul> 
         </div>
       </div>
     </nav>

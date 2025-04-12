@@ -12,7 +12,6 @@ const imagePreview = ref(null);
 const title = ref('');
 const description = ref('');
 const slug = ref('');
-const siput = ref('');
 const errors = ref({});
 const errorMessage = ref('');
 const isLoading = ref(false);
@@ -22,7 +21,7 @@ onMounted(async () => {
     try {
         const response = await axios.get(`http://localhost:8000/api/v1/games/${gameId.value}`);
         const game = response.data.data;
-        siput.value = game.siput;
+
         title.value = game.title;
         description.value = game.description;
         slug.value = game.slug;
@@ -51,7 +50,6 @@ const updateGame = async () => {
     formData.append('title', title.value);
     formData.append('description', description.value);
     formData.append('slug', slug.value);
-    formData.append('siput', siput.value);
 
     isLoading.value = true;
 
@@ -103,18 +101,6 @@ const updateGame = async () => {
                                 />
                                 <div v-if="errors.image" class="alert alert-danger mt-2">
                                     <span>{{ errors.image[0] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Siput</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    v-model="siput"
-                                />
-                                <div v-if="errors.siput" class="alert alert-danger mt-2">
-                                    <span>{{ errors.siput[0] }}</span>
                                 </div>
                             </div>
 

@@ -4,24 +4,31 @@
     import api from '../../api';
     const games = ref([]);
     const fetchDataGames = async () => {
+        try{
+            const response = await api.get('/api/v1/games');
 
-        //fetch data 
-        await api.get('/api/v1/games')
-
-        .then(response => {
-
-            //set response data to state "posts"
-            games.value = response.data.data.data
-
-        });
+            console.log("Response data:", response.data); 
+                        games.value = response.data.data.data;
+        } catch (error) {
+            console.error('Error fetching game data:', error);
+        }
+        
     }
 
-    //run hook "onMounted"
     onMounted(() => {
-
-        //call method "fetchDataPosts"
         fetchDataGames();
     });
+
+    const deleteGames = async (id) => {
+        try {
+
+            await api.delete(`/api/v1/games/${id}`);
+            
+            fetchDataGames();
+        } catch (error) {
+            console.error('Error deleting game:', error);
+        }
+    };
 
     const getImageUrl = (path) => {
         return `http://localhost:8000/storage/${path}`;
@@ -41,7 +48,7 @@
                                 <tr>
                                     <th scope="col">Image</th>
                                     <th scope="col">Title</th>
-                                    <th scope="col" style="width:15%">Actions</th>
+                                    <th scope="col" style="width:20%">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,8 +65,9 @@
                                     </td>
                                     <td>{{ game.title }}</td>
                                     <td class="text-center">
-                                        <router-link :to="{ name: 'admin.game.edit', params:{id: game.id} }" class="btn btn-sm btn-primary rounded-sm shadow border-0 me-2">EDIT</router-link>
-                                        <button class="btn btn-sm btn-danger rounded-sm shadow border-0">DELETE</button>
+                                        <router-link :to="{ name: 'show.game', params:{id: game.id} }" class="btn btn-sm btn-success rounded-sm shadow border-0 me-2">Show</router-link>
+                                        <router-link :to="{ name: 'admin.game.edit', params:{id: game.id} }" class="btn btn-sm btn-primary rounded-sm shadow border-0 me-2">Edit</router-link>
+                                        <button @click.prevent="deleteGames(game.id)"  class="btn btn-sm btn-danger rounded-sm shadow border-0">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
