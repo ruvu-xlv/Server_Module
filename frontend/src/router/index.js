@@ -1,24 +1,34 @@
-// Import vue-router
+//import vue router
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Define routes
+//define a routes
 const routes = [
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/Login.vue'), // Lazy-loaded
-  },
-  {
-    path:'/dashboard',
-    name:'/dashboard',
-    component:()=>import('../views/admin/Dashboard.vue'),
-  }
+    {
+        path: '/',
+        name: 'home',
+        component: () => import( /* webpackChunkName: "home" */ '../views/home.vue')
+    },
+    {
+        path: '/admin/game',
+        name: 'admin.game.index',
+        component: () => import( /* webpackChunkName: "index" */ '../views/game/index.vue')
+    },
+    {
+        path: '/admin/game/create',
+        name: 'admin.game.create',
+        component: () => import( /* webpackChunkName: "create" */ '../views/game/create.vue')
+    },
+    {
+        path: '/admin/game/edit/:id',
+        name: 'admin.game.edit',
+        component: () => import( /* webpackChunkName: "edit" */ '../views/game/edit.vue')
+    }
 ]
 
-// Create router instance
+//create router
 const router = createRouter({
-  history: createWebHistory(), // Using HTML5 history mode
-  routes, // Short-hand for routes: routes
+    history: createWebHistory(),
+    routes // <-- routes,
 })
 
 export default router
