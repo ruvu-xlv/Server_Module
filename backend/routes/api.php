@@ -17,7 +17,7 @@ Route::post('v1/auth/signin',[AuthController::class,'login']);
 Route::middleware('auth:sanctum')->post('v1/auth/logout', [AuthController::class, 'logout']);
 
 
-Route::get('v1/admin',[AdminController::class,'index'])->middleware('auth:sanctum');
+Route::get('v1/user',[AdminController::class,'index']);
 
 
 // games
